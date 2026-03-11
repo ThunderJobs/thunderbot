@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "thunderbot-core",
+    "thunderbot-tools",
+    "thunderbot-cli"
+]
+resolver = "2"
