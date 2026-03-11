@@ -26,7 +26,7 @@ enum Commands {
         session_id: String,
 
         /// The model to use
-        #[arg(short, long, default_value = "dummy-model")]
+        #[arg(short = 'M', long, default_value = "dummy-model")]
         model: String,
 
         /// The initial message to send to the bot (optional, starts REPL if not provided)
