@@ -8,3 +8,7 @@ thunderbot-core = { path = "../thunderbot-core" }
 thunderbot-tools = { path = "../thunderbot-tools" }
 tokio = { version = "1.0", features = ["full"] }
 anyhow = "1.0"
+clap = { version = "4.5", features = ["derive"] }
+serde_json = "1.0"
+async-trait = "0.1"
+uuid = { version = "1.8", features = ["v4"] }
