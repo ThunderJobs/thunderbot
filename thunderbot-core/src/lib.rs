@@ -16,7 +16,7 @@ pub struct Message {
     pub tool_calls: Option<Vec<ToolCall>>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum Role {
     System,

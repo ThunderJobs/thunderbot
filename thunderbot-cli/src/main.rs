@@ -6,8 +6,11 @@ use std::collections::HashMap;
 use std::sync::RwLock;
 
 use thunderbot_core::{
-    AgentEvent, AgentLoop, CompletionResponse, Message, ModelRegistry, Plugin, Role, SessionManager, StopReason, Tool, ToolDefinition, ToolRegistry
+    AgentEvent, AgentLoop, Message, Plugin, Role, SessionManager, Tool, ToolDefinition, ToolRegistry
 };
+use crate::models::RoutingRegistry;
+
+mod models;
 use thunderbot_tools::{BashTool, ListFilesTool, ReadFileTool, WriteFileTool};
 
 #[derive(Parser)]
@@ -43,34 +46,6 @@ enum Commands {
     },
 }
 
-// Simple Model Registry
-struct SimpleModelRegistry;
-
-#[async_trait]
-impl ModelRegistry for SimpleModelRegistry {
-    async fn generate_completion(
-        &self,
-        _model: &str,
-        messages: &[Message],
-        _tools: &[ToolDefinition],
-    ) -> anyhow::Result<CompletionResponse> {
-        // Just echo back the last message for now
-        let last_msg = messages.last().map(|m| m.content.clone()).unwrap_or_default();
-
-        let msg = Message {
-            id: uuid::Uuid::new_v4().to_string(),
-            parent_id: messages.last().map(|m| m.id.clone()),
-            role: Role::Assistant,
-            content: format!("Echo: {}", last_msg),
-            tool_calls: None,
-        };
-
-        Ok(CompletionResponse {
-            message: msg,
-            stop_reason: StopReason::EndTurn,
-        })
-    }
-}
 
 // Simple Tool Registry
 struct SimpleToolRegistry {
@@ -162,7 +137,8 @@ async fn main() -> Result<()> {
         Commands::Chat { session_id, model, message } => {
             println!("Initializing Thunderbot CLI...");
 
-            let model_registry = SimpleModelRegistry;
+            // Use the real routing registry, requires OPENAI_API_KEY or GEMINI_API_KEY
+            let routing_registry = RoutingRegistry::new();
 
             let mut tool_registry = SimpleToolRegistry::new();
             tool_registry.register(Box::new(ReadFileTool));
@@ -172,7 +148,7 @@ async fn main() -> Result<()> {
 
             let session_manager = SimpleSessionManager::new();
 
-            let mut agent_loop = AgentLoop::new(&model_registry, &tool_registry, &session_manager);
+            let mut agent_loop = AgentLoop::new(&routing_registry, &tool_registry, &session_manager);
             agent_loop.register_plugin(Box::new(LoggingPlugin));
 
             println!("Running agent loop for session: {}", session_id);
