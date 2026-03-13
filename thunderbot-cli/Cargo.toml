@@ -3,6 +3,10 @@ name = "thunderbot-cli"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "thunderbot"
+path = "src/main.rs"
+
 [dependencies]
 thunderbot-core = { path = "../thunderbot-core" }
 thunderbot-tools = { path = "../thunderbot-tools" }
@@ -14,3 +18,5 @@ async-trait = "0.1"
 uuid = { version = "1.8", features = ["v4"] }
 reqwest = { version = "0.12", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
+dotenvy = "0.15"
+
